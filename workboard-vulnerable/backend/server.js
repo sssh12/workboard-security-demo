@@ -28,6 +28,10 @@ mongoose
     console.error("❌ MongoDB 연결 실패:", error);
   });
 
+// 라우트 연결
+const authRoutes = require("./routes/auth");
+app.use("/api", authRoutes);
+
 // 기본 라우트 (메인 페이지)
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
@@ -39,6 +43,40 @@ app.get("/api/test", (req, res) => {
     message: "서버가 정상적으로 작동 중입니다.",
     timestamp: new Date().toISOString(),
   });
+});
+
+// 임시 게시글 목록 API
+app.get("/api/posts", (req, res) => {
+  const samplePosts = [
+    {
+      id: 1,
+      title: "🎉 WorkBoard 게시판 오픈!",
+      content:
+        "안전한 사내 게시판 시스템을 구축했습니다. 많은 이용 부탁드립니다.",
+      author: "관리자",
+      createdAt: "2025-05-30T10:00:00Z",
+      comments: 3,
+    },
+    {
+      id: 2,
+      title: "📢 보안 정책 안내",
+      content: "모든 직원들은 강력한 비밀번호를 사용해주시기 바랍니다.",
+      author: "보안팀",
+      createdAt: "2025-05-30T09:30:00Z",
+      comments: 1,
+    },
+    {
+      id: 3,
+      title: "🍕 점심 메뉴 추천",
+      content: "오늘 점심으로 맛있는 피자 어떠세요?",
+      author: "김철수",
+      createdAt: "2025-05-30T09:00:00Z",
+      comments: 5,
+    },
+  ];
+
+  console.log("📡 게시글 목록 API 호출됨");
+  res.json(samplePosts);
 });
 
 // 서버 시작

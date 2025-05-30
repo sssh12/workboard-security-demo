@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입 - WorkBoard</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* index.html과 동일한 커스텀 스타일 */
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .footer {
+        background-color: #343a40;
+        color: white;
+        padding: 20px 0;
+      }
+      /* Sticky footer 설정 */
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+      .container-wrapper {
+        flex: 1;
+      }
+      /* 알림 메시지 스타일 개선 */
+      #alertContainer {
+        position: relative;
+        z-index: 1000;
+      }
+
+      #alertContainer .alert {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: none;
+        font-weight: 500;
+      }
+
+      /* 알림 타입별 색상 강화 */
+      .alert-success {
+        background-color: #d1e7dd;
+        color: #0a3622;
+        border-left: 4px solid #198754;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #58151c;
+        border-left: 4px solid #dc3545;
+      }
+
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+        border-left: 4px solid #ffc107;
+      }
+
+      .alert-info {
+        background-color: #cff4fc;
+        color: #055160;
+        border-left: 4px solid #0dcaf0;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <!-- 네비게이션 -->
+    <nav class="navbar navbar-dark gradient-bg shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fs-4 fw-bold" href="index.html">🏢 WorkBoard</a>
+        <div>
+          <a href="login.html" class="btn btn-light me-2">로그인</a>
+          <a href="index.html" class="btn btn-outline-light">홈으로</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 회원가입 폼 -->
+    <div class="container-wrapper">
+      <!-- 상단 고정 알림 영역 -->
+      <div id="alertContainer" class="container mt-3">
+        <!-- 알림이 여기에 표시됩니다 -->
+      </div>
+
+      <div class="container mt-4">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card shadow">
+              <div class="card-header gradient-bg text-white text-center">
+                <h3 class="mb-0">🆕 회원가입</h3>
+                <p class="mb-0 mt-2">WorkBoard에 오신 것을 환영합니다!</p>
+              </div>
+              <div class="card-body p-4">
+                <!-- 회원가입 폼 -->
+                <form id="registerForm">
+                  <!-- 이름 입력 -->
+                  <div class="mb-3">
+                    <label for="name" class="form-label">
+                      <i class="bi bi-person"></i> 이름 *
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="name"
+                      name="name"
+                      placeholder="홍길동"
+                      required
+                      minlength="2"
+                      maxlength="50"
+                    />
+                    <div class="form-text">2-50자 이내로 입력해주세요.</div>
+                  </div>
+
+                  <!-- 이메일 입력 -->
+                  <div class="mb-3">
+                    <label for="email" class="form-label">
+                      <i class="bi bi-envelope"></i> 이메일 *
+                    </label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="hong@company.com"
+                      required
+                    />
+                    <div class="form-text">회사 이메일을 사용해주세요.</div>
+                  </div>
+
+                  <!-- 비밀번호 입력 -->
+                  <div class="mb-3">
+                    <label for="password" class="form-label">
+                      <i class="bi bi-lock"></i> 비밀번호 *
+                    </label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      name="password"
+                      placeholder="6자 이상 입력"
+                      required
+                      minlength="6"
+                    />
+                    <div class="form-text">최소 6자 이상 입력해주세요.</div>
+                  </div>
+
+                  <!-- 비밀번호 확인 -->
+                  <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">
+                      <i class="bi bi-lock-fill"></i> 비밀번호 확인 *
+                    </label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="confirmPassword"
+                      placeholder="비밀번호를 다시 입력"
+                      required
+                    />
+                    <div id="passwordMatch" class="form-text"></div>
+                  </div>
+
+                  <!-- 부서 선택 -->
+                  <div class="mb-4">
+                    <label for="department" class="form-label">
+                      <i class="bi bi-building"></i> 부서 *
+                    </label>
+                    <select
+                      class="form-select"
+                      id="department"
+                      name="department"
+                      required
+                    >
+                      <option value="">부서를 선택해주세요</option>
+                      <option value="개발팀">개발팀</option>
+                      <option value="기획팀">기획팀</option>
+                      <option value="디자인팀">디자인팀</option>
+                      <option value="마케팅팀">마케팅팀</option>
+                      <option value="영업팀">영업팀</option>
+                      <option value="인사팀">인사팀</option>
+                      <option value="재무팀">재무팀</option>
+                      <option value="기타">기타</option>
+                    </select>
+                  </div>
+
+                  <!-- 제출 버튼 -->
+                  <div class="d-grid">
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-lg"
+                      id="submitBtn"
+                    >
+                      <span id="submitText">🚀 회원가입</span>
+                      <span
+                        id="loadingSpinner"
+                        class="spinner-border spinner-border-sm d-none"
+                        role="status"
+                      >
+                        <span class="visually-hidden">처리중...</span>
+                      </span>
+                    </button>
+                  </div>
+                </form>
+
+                <!-- 로그인 링크 -->
+                <div class="text-center mt-3">
+                  <p class="mb-0">
+                    이미 계정이 있으신가요?
+                    <a href="login.html" class="text-decoration-none"
+                      >로그인하기</a
+                    >
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 알림 메시지 영역 -->
+            <div id="alertContainer" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer mt-auto">
+      <div class="container text-center">
+        <p class="mb-0">
+          &copy; 2025 WorkBoard Security Demo - OWASP 취약점 학습 프로젝트
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/register.js"></script>
+  </body>
+</html>
