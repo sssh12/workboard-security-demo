@@ -23,7 +23,7 @@ router.get("/posts", async (req, res) => {
   }
 });
 
-// 게시글 작성 API (🚨 XSS 취약점 포함)
+// 게시글 작성 API
 router.post("/posts", async (req, res) => {
   try {
     const { title, content, author, authorId, department } = req.body;
