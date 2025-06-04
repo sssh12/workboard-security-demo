@@ -41,14 +41,13 @@ router.post("/posts", async (req, res) => {
       });
     }
 
-    // 🚨 XSS 취약점: HTML 태그를 그대로 저장
     console.log("⚠️ 경고: HTML 태그 필터링 없이 저장 중...");
     console.log("⚠️ 입력된 내용:", content);
 
     // 새 게시글 생성
     const newPost = new Post({
       title,
-      content, // 🚨 여기서 XSS 취약점 발생!
+      content,
       author,
       authorId,
       department,
@@ -68,7 +67,7 @@ router.post("/posts", async (req, res) => {
         department: savedPost.department,
         createdAt: savedPost.createdAt,
       },
-      // 🚨 취약점: 저장된 내용을 그대로 반환 (디버그 정보)
+
       debug: {
         savedContent: savedPost.content,
         warning: "⚠️ HTML 태그가 필터링 없이 저장되었습니다!",

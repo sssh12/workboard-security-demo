@@ -11,8 +11,6 @@ const postSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true,
-    // 🚨 XSS 취약점: HTML 태그를 허용하기 위해 검증 없음
-    // 실제로는 여기서 HTML 태그를 제한해야 함
   },
   author: {
     type: String,
