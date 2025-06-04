@@ -275,3 +275,48 @@ function copySecurityTest() {
       alert("복사에 실패했습니다. 수동으로 코드를 복사해주세요.");
     });
 }
+
+// 보안 차단 테스트 함수
+function testSecurityBlocking() {
+  console.log("🛡️ 보안 차단 테스트 시작...");
+
+  // NoSQL Injection 공격 시도
+  fetch("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: "admin@company.com",
+      password: { $ne: null }, // NoSQL Injection 시도
+    }),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log("🔍 보안 테스트 결과:", result);
+
+      // 결과에 따른 알림
+      if (result.success) {
+        // 보안이 뚫린 경우 (이론적으로는 발생하지 않아야 함)
+        alert(
+          "❌ 경고: 보안 시스템이 우회되었습니다!\n이는 심각한 보안 취약점입니다."
+        );
+        console.error("❌ 보안 실패: NoSQL Injection 공격 성공");
+      } else {
+        // 보안이 제대로 작동한 경우
+        alert(
+          "✅ 보안 테스트 완료!\n\nNoSQL Injection 공격이 성공적으로 차단되었습니다.\n보안 시스템이 정상적으로 작동하고 있습니다."
+        );
+        console.log("✅ 보안 성공: 공격 차단됨");
+      }
+
+      // 에러 메시지가 있다면 표시
+      if (result.error) {
+        console.log("🛡️ 보안 메시지:", result.error);
+      }
+    })
+    .catch((error) => {
+      console.error("🚨 테스트 중 오류 발생:", error);
+      alert("테스트 중 오류가 발생했습니다.\n콘솔을 확인해주세요.");
+    });
+}
