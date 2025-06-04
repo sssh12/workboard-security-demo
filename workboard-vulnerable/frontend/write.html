@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>새 글 작성 - WorkBoard</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .footer {
+        background-color: #343a40;
+        color: white;
+        padding: 20px 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+      .container-wrapper {
+        flex: 1;
+      }
+      .vulnerability-warning {
+        border: 2px dashed #dc3545;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <!-- 네비게이션 -->
+    <nav class="navbar navbar-dark gradient-bg shadow-sm">
+      <div class="container">
+        <a class="navbar-brand fs-4 fw-bold" href="index.html">🏢 WorkBoard</a>
+        <div>
+          <a href="index.html" class="btn btn-light me-2">목록으로</a>
+          <button
+            id="logout-btn"
+            class="btn btn-outline-light"
+            style="display: none"
+          >
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-wrapper">
+      <!-- 상단 고정 알림 영역 -->
+      <div id="alertContainer" class="container mt-3"></div>
+
+      <div class="container mt-4">
+        <!-- XSS 취약점 경고 -->
+        <div class="vulnerability-warning mb-4">
+          <h6>
+            <i class="bi bi-exclamation-triangle"></i> XSS 취약점 실습 환경
+          </h6>
+          <small
+            >이 게시글 작성 시스템은 <strong>의도적으로 XSS 취약점</strong>을
+            포함하고 있습니다.<br />
+            HTML 태그가 필터링 없이 저장되고 표시됩니다.</small
+          >
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card shadow">
+              <div class="card-header gradient-bg text-white">
+                <h4 class="mb-0">✏️ 새 글 작성</h4>
+              </div>
+              <div class="card-body p-4">
+                <form id="writeForm">
+                  <!-- 제목 입력 -->
+                  <div class="mb-3">
+                    <label for="title" class="form-label">
+                      <i class="bi bi-pencil"></i> 제목 *
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="title"
+                      name="title"
+                      placeholder="게시글 제목을 입력하세요"
+                      required
+                      maxlength="200"
+                    />
+                    <div class="form-text">최대 200자까지 입력 가능합니다.</div>
+                  </div>
+
+                  <!-- 내용 입력 -->
+                  <div class="mb-4">
+                    <label for="content" class="form-label">
+                      <i class="bi bi-card-text"></i> 내용 *
+                    </label>
+                    <textarea
+                      class="form-control"
+                      id="content"
+                      name="content"
+                      rows="10"
+                      placeholder="게시글 내용을 작성하세요..."
+                      required
+                    ></textarea>
+                    <div class="form-text text-danger">
+                      ⚠️ <strong>XSS 테스트:</strong> HTML 태그가 그대로
+                      저장됩니다. <code>&lt;script&gt;</code>,
+                      <code>&lt;img&gt;</code> 등의 태그를 사용해보세요.
+                    </div>
+                  </div>
+
+                  <!-- 버튼 영역 -->
+                  <div class="d-flex justify-content-between">
+                    <a href="index.html" class="btn btn-outline-secondary">
+                      <i class="bi bi-arrow-left"></i> 취소
+                    </a>
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-lg"
+                      id="submitBtn"
+                    >
+                      <span id="submitText">📝 게시글 등록</span>
+                      <span
+                        id="loadingSpinner"
+                        class="spinner-border spinner-border-sm d-none"
+                      ></span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- XSS 테스트 가이드 -->
+            <div class="card mt-4">
+              <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0">
+                  <i class="bi bi-bug-fill"></i> XSS 공격 테스트 예제
+                </h6>
+              </div>
+              <div class="card-body">
+                <p class="small mb-3">
+                  다음 예제들을 복사해서 <strong>내용</strong> 필드에 붙여넣고
+                  테스트해보세요:
+                </p>
+
+                <div class="mb-3">
+                  <strong class="small text-danger">1. 기본 alert 창:</strong>
+                  <div class="p-2 bg-light rounded mt-1">
+                    <code
+                      >&lt;script&gt;alert('XSS 공격
+                      성공!');&lt;/script&gt;</code
+                    >
+                    <button
+                      class="btn btn-sm btn-outline-secondary ms-2"
+                      onclick="copyXSS(this)"
+                      data-xss="<script>alert('XSS 공격 성공!');</script>"
+                    >
+                      복사
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <strong class="small text-danger"
+                    >2. 쿠키 탈취 시뮬레이션:</strong
+                  >
+                  <div class="p-2 bg-light rounded mt-1">
+                    <code
+                      >&lt;script&gt;alert('쿠키: ' +
+                      document.cookie);&lt;/script&gt;</code
+                    >
+                    <button
+                      class="btn btn-sm btn-outline-secondary ms-2"
+                      onclick="copyXSS(this)"
+                      data-xss="<script>alert('쿠키: ' + document.cookie);</script>"
+                    >
+                      복사
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <strong class="small text-danger"
+                    >3. 이미지 태그 이벤트:</strong
+                  >
+                  <div class="p-2 bg-light rounded mt-1">
+                    <code
+                      >&lt;img src="x" onerror="alert('이미지 XSS
+                      공격!')"&gt;</code
+                    >
+                    <button
+                      class="btn btn-sm btn-outline-secondary ms-2"
+                      onclick="copyXSS(this)"
+                      data-xss='<img src="x" onerror="alert(&#39;이미지 XSS 공격!&#39;)">'
+                    >
+                      복사
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+      <div class="container text-center">
+        <p class="mb-0">
+          &copy; 2025 WorkBoard Security Demo - OWASP 취약점 학습 프로젝트
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/write.js"></script>
+  </body>
+</html>

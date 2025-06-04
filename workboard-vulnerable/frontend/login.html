@@ -107,7 +107,7 @@
             <!-- 취약점 경고 (개발/학습용) -->
             <div class="vulnerability-warning">
               <h6>
-                <i class="bi bi-exclamation-triangle"></i> 보안 취약점 실습 버전
+                <i class="bi bi-exclamation-triangle"></i> 보안 취약점 버전
               </h6>
               <small
                 >이 로그인 시스템은
@@ -130,19 +130,13 @@
                       <i class="bi bi-envelope"></i> 이메일
                     </label>
                     <input
-                      type="text"
+                      type="email"
                       class="form-control"
                       id="email"
                       name="email"
                       placeholder="your@company.com"
                       required
                     />
-                    <div class="form-text text-warning">
-                      <small
-                        >⚠️ SQL Injection 테스트를 위해 이메일 검증을
-                        비활성화했습니다.</small
-                      >
-                    </div>
                   </div>
 
                   <!-- 비밀번호 입력 -->
@@ -376,12 +370,6 @@ setTimeout(() => window.location.href = 'index.html', 3000);
                         </li>
                       </ul>
                     </div>
-                  </div>
-
-                  <div class="small text-info mt-2">
-                    <strong>📚 학습 목표:</strong> 이 실습을 통해 NoSQL
-                    Injection의 원리를 이해하고, 실제 개발 시 방어 코드를 작성할
-                    수 있게 됩니다.
                   </div>
                 </div>
               </div>

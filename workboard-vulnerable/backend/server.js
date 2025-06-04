@@ -30,7 +30,10 @@ mongoose
 
 // 라우트 연결
 const authRoutes = require("./routes/auth");
+const postsRoutes = require("./routes/posts");
+
 app.use("/api", authRoutes);
+app.use("/api", postsRoutes);
 
 // 기본 라우트 (메인 페이지)
 app.get("/", (req, res) => {

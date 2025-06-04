@@ -120,7 +120,7 @@ function displaySamplePosts() {
   displayPosts(samplePosts);
 }
 
-// 게시글 목록 화면에 표시 (Bootstrap 카드 형태)
+// 게시글 목록 화면에 표시 (🚨 XSS 취약점 포함)
 function displayPosts(posts) {
   const postsListElement = document.getElementById("posts-list");
   const noPostsElement = document.getElementById("no-posts");
@@ -130,36 +130,32 @@ function displayPosts(posts) {
     return;
   }
 
-  // Bootstrap 카드 형태로 게시글 HTML 생성
+  console.log(`📋 ${posts.length}개 게시글 표시 중...`);
+
+  // 🚨 XSS 취약점: innerHTML을 사용하여 HTML 태그가 실행됨
   const postsHTML = posts
     .map(
       (post) => `
         <div class="col-md-6 col-lg-4">
-            <div class="card h-100 post-card shadow-sm" onclick="viewPost(${
-              post.id
-            })" style="cursor: pointer;">
+            <div class="card h-100 post-card shadow-sm" onclick="viewPost('${
+              post._id
+            }')" style="cursor: pointer;">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">${escapeHtml(
-                      post.title
-                    )}</h5>
-                    <p class="card-text text-muted">${escapeHtml(
-                      post.content.substring(0, 100)
-                    )}${post.content.length > 100 ? "..." : ""}</p>
+                    <h5 class="card-title text-primary">${post.title}</h5>
+                    <div class="card-text text-muted">
+                        ${post.content.substring(0, 150)}${
+        post.content.length > 150 ? "..." : ""
+      }
+                    </div>
                 </div>
                 <div class="card-footer bg-transparent">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <small class="text-muted">
-                                <i class="bi bi-person"></i> ${escapeHtml(
-                                  post.author
-                                )}
-                                ${
+                                <i class="bi bi-person"></i> ${post.author}
+                                <span class="badge bg-secondary ms-1">${
                                   post.department
-                                    ? `<span class="badge bg-secondary ms-1">${escapeHtml(
-                                        post.department
-                                      )}</span>`
-                                    : ""
-                                }
+                                }</span>
                             </small>
                         </div>
                         <div>
@@ -172,7 +168,10 @@ function displayPosts(posts) {
                     </div>
                     <div class="mt-2">
                         <small class="text-muted">
-                            <i class="bi bi-chat"></i> 댓글 ${post.comments}개
+                            <i class="bi bi-eye"></i> 조회 ${post.views || 0} 
+                            <i class="bi bi-chat ms-2"></i> 댓글 ${
+                              post.comments || 0
+                            }
                         </small>
                     </div>
                 </div>
@@ -182,9 +181,46 @@ function displayPosts(posts) {
     )
     .join("");
 
+  // 🚨 여기서 XSS 공격이 실행됩니다!
   postsListElement.innerHTML = postsHTML;
-}
 
+  // 🔧 XSS 디버깅: 실제로 삽입된 내용 확인
+  console.log("⚠️ XSS 위험: HTML 태그가 필터링 없이 렌더링되었습니다!");
+  console.log("삽입된 HTML:", postsHTML);
+
+  // 🚨 강제로 script 태그 실행 (Chrome 우회)
+  posts.forEach((post) => {
+    if (
+      post.content.includes("<script>") ||
+      post.content.includes("onerror=") ||
+      post.content.includes("onload=")
+    ) {
+      console.log("🚨 XSS 코드 감지:", post.content);
+
+      // script 태그가 있으면 강제로 실행
+      const scriptMatch = post.content.match(/<script>(.*?)<\/script>/);
+      if (scriptMatch) {
+        console.log("🚨 script 태그 실행 시도:", scriptMatch[1]);
+        try {
+          eval(scriptMatch[1]);
+        } catch (e) {
+          console.error("script 실행 오류:", e);
+        }
+      }
+
+      // onerror 이벤트가 있으면 강제로 실행
+      const onerrorMatch = post.content.match(/onerror="([^"]+)"/);
+      if (onerrorMatch) {
+        console.log("🚨 onerror 이벤트 실행 시도:", onerrorMatch[1]);
+        try {
+          eval(onerrorMatch[1]);
+        } catch (e) {
+          console.error("onerror 실행 오류:", e);
+        }
+      }
+    }
+  });
+}
 // 게시글 상세 보기 (임시)
 function viewPost(postId) {
   console.log(`게시글 ${postId} 보기`);

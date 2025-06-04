@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true, // 공백 자동 제거거
+    trim: true, // 공백 자동 제거
     minlength: 2,
     maxlength: 50,
   },
