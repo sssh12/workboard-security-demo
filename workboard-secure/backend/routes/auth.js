@@ -11,14 +11,14 @@ router.post("/register", async (req, res) => {
 
     console.log("📝 회원가입 요청:", { name, email, department });
 
-    // ✅ 입력값 검증 강화
+    // 입력값 검증 강화
     if (!name || !email || !password || !department) {
       return res.status(400).json({
         message: "모든 필드를 입력해주세요.",
       });
     }
 
-    // ✅ 이메일 형식 검증
+    // 이메일 형식 검증
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -26,7 +26,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // ✅ 비밀번호 강도 검증
+    // 비밀번호 강도 검증
     if (password.length < 8) {
       return res.status(400).json({
         message: "비밀번호는 최소 8자 이상이어야 합니다.",
@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    // ✅ 비밀번호 해싱 (보안 개선)
+    // 비밀번호 해싱 (보안 개선)
     console.log("🔐 비밀번호 해싱 처리 중...");
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -77,21 +77,21 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// 🛡️ 보안 개선된 로그인 API (NoSQL Injection 방어)
+// 보안 개선된 로그인 API (NoSQL Injection 방어)
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     console.log("🔐 로그인 시도:", email);
 
-    // ✅ 입력값 검증
+    // 입력값 검증
     if (!email || !password) {
       return res.status(400).json({
         message: "이메일과 비밀번호를 입력해주세요.",
       });
     }
 
-    // ✅ 입력값 타입 검증 (NoSQL Injection 방어)
+    // 입력값 타입 검증 (NoSQL Injection 방어)
     if (typeof email !== "string" || typeof password !== "string") {
       console.log("🚫 NoSQL Injection 시도 차단: 입력값이 문자열이 아님");
       return res.status(400).json({
@@ -100,7 +100,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // ✅ 이메일 형식 검증
+    // 이메일 형식 검증
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -110,7 +110,7 @@ router.post("/login", async (req, res) => {
 
     console.log("🛡️ 보안 쿼리 실행 중...");
 
-    // ✅ 안전한 쿼리: 문자열만 허용
+    // 안전한 쿼리: 문자열만 허용
     const user = await User.findOne({ email: email });
 
     if (!user) {
@@ -120,7 +120,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // ✅ 해싱된 비밀번호 검증
+    // 해싱된 비밀번호 검증
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       console.log("❌ 비밀번호 불일치");
@@ -141,7 +141,7 @@ router.post("/login", async (req, res) => {
         department: user.department,
         role: user.role,
       },
-      // ✅ 보안 정보 (디버그용)
+      // 보안 정보 (디버그용)
       security: {
         message: "🛡️ 보안이 강화된 로그인입니다.",
         protections: [

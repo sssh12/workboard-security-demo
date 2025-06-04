@@ -65,25 +65,25 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
-// 🛡️ 보안 개선된 게시글 목록 API
+// 보안 개선된 게시글 목록 API
 app.get("/api/posts", (req, res) => {
   console.log("📡 보안 게시글 목록 API 호출됨");
   res.json(posts);
 });
 
-// 🛡️ 보안 개선된 게시글 작성 API
+// 보안 개선된 게시글 작성 API
 app.post("/api/posts", (req, res) => {
   try {
     const { title, content, author, authorId, department } = req.body;
 
     console.log("📝 보안 게시글 작성 요청:", { title, author });
 
-    // ✅ 입력값 검증 강화
+    // 입력값 검증 강화
     if (!title || !content || !author) {
       return res.status(400).json({ message: "필수 필드가 누락되었습니다." });
     }
 
-    // ✅ 문자열 타입 검증
+    // 문자열 타입 검증
     try {
       validateStringInput(title, "제목");
       validateStringInput(content, "내용");
@@ -93,7 +93,7 @@ app.post("/api/posts", (req, res) => {
       return res.status(400).json({ message: error.message });
     }
 
-    // ✅ XSS 공격 탐지
+    // XSS 공격 탐지
     const originalContent = content;
     const dangerousPatterns = [
       /<script/i,
@@ -120,7 +120,7 @@ app.post("/api/posts", (req, res) => {
       console.log("🚫 XSS 공격 시도가 차단되었습니다!");
     }
 
-    // ✅ 보안 처리: HTML 태그 제거 및 이스케이프
+    // 보안 처리: HTML 태그 제거 및 이스케이프
     const secureTitle = escapeHtml(limitLength(title, 200));
     const secureContent = sanitizeHtml(limitLength(content, 5000));
 
